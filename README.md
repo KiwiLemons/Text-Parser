@@ -7,3 +7,4 @@ I've made an example button that should show how to use the program. Also if you
 * Improve the handling of errors in a recursive parse
 * Make it look better
   * I don't want to use a different GUI framework but I want to just make it look less cluttered
+* Add more comments to explain things
