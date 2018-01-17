@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
@@ -21,6 +14,28 @@ namespace TextParser
         public Form1()
         {
             InitializeComponent();
+        }
+        //Form Load
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                string V = webClient.DownloadString("https://pastebin.com/raw/Ky3810DF");
+                if (V != "1.1")
+                {
+                    if (MessageBox.Show(String.Format("A new version is available!\nCurrent Version: 1.1\nNew Version: {0}\nWould you like to go to the download page?", V), "Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        Process.Start("https://github.com/KiwiLemons/Text-Parser/releases");
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                if (ex.Message.Contains("The remote name could not be resolved"))
+                {
+                    MessageBox.Show("Version check has failed!\nEither your internet is disconnected or servers are down, which is unlikely.","An error has occured",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                }
+            }
         }
         //Parse Button
         private void button1_Click(object sender, EventArgs e)
@@ -38,26 +53,54 @@ namespace TextParser
                 }
                 else
                 {
-                    textBox2.Text = "It has been copied to your Clipboard";
                     Clipboard.SetText(TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked));
+                    textBox2.Text = "It has been copied to your Clipboard";
                 }
-                
             }
         }
-        private string TextParser(string leftString, string rightString, string Input, string prefix, string suffix, bool recursive,bool numbers)
+        private string TextParser(string leftString, string rightString, string Input, string prefix, string suffix, bool recursive, bool numbers)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             string extracted = "error";
+            //Check if input contains left string
+            if (!Input.Contains(leftString))
+            {
+                textBox5.Text = "The left string does not exist in this input";
+                return extracted;
+            }
+            //Check if input contains left string
+            else if (!Input.Contains(rightString))
+            {
+                textBox5.Text = "The right string does not exist in this input";
+                return extracted;
+            }
+            try
+            {
+                //Remove everything before the first left string
+                Input = Input.Substring(Input.IndexOf(leftString), Input.Length - Input.IndexOf(leftString));
+            }
+            catch (Exception ex)
+            {
+                //Extra left string check
+                if (ex.Message.Contains("StartIndex cannot be less than zero"))
+                {
+                    textBox5.Text = "Left string does not exist in this input";
+                    return extracted;
+                }
+                else
+                    MessageBox.Show(ex.Message);
+            }
             if (!recursive)
             {
                 try
                 {
+                    //Do stuff
                     extracted = String.Format("{1}{0}{2}", Input.Substring(Input.IndexOf(leftString) + leftString.Length, Input.IndexOf(rightString) - Input.IndexOf(leftString) - leftString.Length),prefix,suffix);
                 }
                 catch (ArgumentOutOfRangeException ex)
                 {
-                    textBox5.Text = ex.Message;
+                    //Do something idk
                 }
             }
             else if (recursive)
@@ -66,7 +109,7 @@ namespace TextParser
                 int amount = counter.Matches(Input).Count;
                 int i = 1, errors = 0;
                 extracted = "";
-                while (i <= amount)
+                while (i - errors <= amount)
                 {
                     try
                     {
@@ -81,7 +124,6 @@ namespace TextParser
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
-                        //textBox5.Text = ex.Message;
                         ++errors;
                     }
                     Input = Input.Substring(Input.IndexOf(rightString) + rightString.Length);
@@ -123,9 +165,16 @@ namespace TextParser
                 {
                     textBox4.Text = webClient.DownloadString(url);
                 }
-                catch (Exception ex)
+                catch (WebException ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    if (ex.Message.Contains("The remote name could not be resolved"))
+                    {
+                        MessageBox.Show("Either your internet connection is down or the web server is down","Connection Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show(String.Format("An unexpected error has occured!\n{0}",ex.Message),"Error");
+                    }
                 }
             }
         }
