@@ -18,6 +18,7 @@ namespace TextParser
         //Form Load
         private void Form1_Load(object sender, EventArgs e)
         {
+            textBox4.MaxLength = int.MaxValue;
             try
             {
                 string V = webClient.DownloadString("https://pastebin.com/raw/Ky3810DF");
@@ -33,7 +34,7 @@ namespace TextParser
             {
                 if (ex.Message.Contains("The remote name could not be resolved"))
                 {
-                    MessageBox.Show("Version check has failed!\nEither your internet is disconnected or servers are down, which is unlikely.","An error has occured",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    MessageBox.Show("Version check has failed!\nEither your internet is disconnected or servers are down, which is unlikely.", "An error has occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -53,8 +54,7 @@ namespace TextParser
                 }
                 else
                 {
-                    Clipboard.SetText(TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked));
-                    textBox2.Text = "It has been copied to your Clipboard";
+                    textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked);
                 }
             }
         }
@@ -96,16 +96,17 @@ namespace TextParser
                 try
                 {
                     //Do stuff
-                    extracted = String.Format("{1}{0}{2}", Input.Substring(Input.IndexOf(leftString) + leftString.Length, Input.IndexOf(rightString) - Input.IndexOf(leftString) - leftString.Length),prefix,suffix);
+                    extracted = String.Format("{1}{0}{2}", Input.Substring(Input.IndexOf(leftString) + leftString.Length, Input.IndexOf(rightString) - Input.IndexOf(leftString)), prefix, suffix);
                 }
                 catch (ArgumentOutOfRangeException ex)
                 {
                     //Do something idk
+                    MessageBox.Show(ex.Message);
                 }
             }
             else if (recursive)
             {
-                Regex counter = new Regex(String.Format("{0}.*{1}", leftString, rightString));
+                Regex counter = new Regex(String.Format("{0}.*{1}", Regex.Escape(leftString), Regex.Escape(rightString)));
                 int amount = counter.Matches(Input).Count;
                 int i = 1, errors = 0;
                 extracted = "";
@@ -115,19 +116,25 @@ namespace TextParser
                     {
                         if (numbers)
                         {
-                            extracted += String.Format("#{0} {2}{1}{3}\n", i - errors, Input.Substring(Input.IndexOf(leftString) + leftString.Length, Input.IndexOf(rightString) - Input.IndexOf(leftString) - leftString.Length), prefix, suffix);
+                            extracted += String.Format("#{0} {2}{1}{3}\n", i, Input.Substring(Input.IndexOf(leftString) + leftString.Length, Input.IndexOf(rightString) - Input.IndexOf(leftString) - leftString.Length), prefix, suffix);
                         }
                         else
                         {
-                            extracted += String.Format("{1}{0}{2}\n",Input.Substring(Input.IndexOf(leftString) + leftString.Length, Input.IndexOf(rightString) - Input.IndexOf(leftString) - leftString.Length), prefix, suffix);
+                            extracted += String.Format("{1}{0}{2}\n", Input.Substring(Input.IndexOf(leftString) + leftString.Length, Input.IndexOf(rightString) - Input.IndexOf(leftString) - leftString.Length), prefix, suffix);
                         }
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
-                        ++errors;
+                        --i;
                     }
                     Input = Input.Substring(Input.IndexOf(rightString) + rightString.Length);
                     ++i;
+                }
+                //if extracted contains more than one \n
+                if (Regex.Matches(extracted,@"\n").Count > 1)
+                {
+                    Clipboard.SetText(extracted);
+                    extracted = "The text has been copied to your clipboard!";
                 }
             }
             stopwatch.Stop();
@@ -153,7 +160,7 @@ namespace TextParser
             textBox4.Text = @"///find me\\\";
             Prefix.Text = "You can ";
             Suffix.Text = "!";
-            textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text,Prefix.Text,Suffix.Text, false,false);
+            textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, false, false);
         }
         //input from URL button
         private void button4_Click(object sender, EventArgs e)
@@ -169,11 +176,11 @@ namespace TextParser
                 {
                     if (ex.Message.Contains("The remote name could not be resolved"))
                     {
-                        MessageBox.Show("Either your internet connection is down or the web server is down","Connection Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                        MessageBox.Show("Either your internet connection is down or the web server is down", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     else
                     {
-                        MessageBox.Show(String.Format("An unexpected error has occured!\n{0}",ex.Message),"Error");
+                        MessageBox.Show(String.Format("An unexpected error has occured!\n{0}", ex.Message), "Error");
                     }
                 }
             }
