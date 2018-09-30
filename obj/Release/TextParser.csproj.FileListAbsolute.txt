@@ -1,0 +1,15 @@
+C:\Users\Austen-PC\source\repos\TextParser\bin\Release\TextParser.exe.config
+C:\Users\Austen-PC\source\repos\TextParser\bin\Release\TextParser.exe
+C:\Users\Austen-PC\source\repos\TextParser\bin\Release\TextParser.pdb
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.Form1.resources
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.Properties.Resources.resources
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.csproj.GenerateResource.Cache
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.csproj.CoreCompileInputs.cache
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.exe
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.pdb
+C:\Users\Austen-PC\source\repos\TextParser\bin\Release\TextParser.exe.manifest
+C:\Users\Austen-PC\source\repos\TextParser\bin\Release\TextParser.application
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.TrustInfo.xml
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.exe.manifest
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.application
+C:\Users\Austen-PC\source\repos\TextParser\obj\Release\TextParser.csprojResolveAssemblyReference.cache

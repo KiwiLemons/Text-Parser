@@ -1,0 +1,15 @@
+C:\Users\Austen-PC\source\repos\TextParser\bin\Debug\TextParser.exe.config
+C:\Users\Austen-PC\source\repos\TextParser\bin\Debug\TextParser.exe
+C:\Users\Austen-PC\source\repos\TextParser\bin\Debug\TextParser.pdb
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.Properties.Resources.resources
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.csproj.GenerateResource.Cache
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.csproj.CoreCompileInputs.cache
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.exe
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.pdb
+C:\Users\Austen-PC\source\repos\TextParser\bin\Debug\TextParser.exe.manifest
+C:\Users\Austen-PC\source\repos\TextParser\bin\Debug\TextParser.application
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.TrustInfo.xml
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.exe.manifest
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.application
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.csprojAssemblyReference.cache
+C:\Users\Austen-PC\source\repos\TextParser\obj\Debug\TextParser.Main.resources
