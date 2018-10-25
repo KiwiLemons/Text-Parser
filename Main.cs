@@ -21,10 +21,13 @@ namespace TextParser
             textBox4.MaxLength = int.MaxValue;
             try
             {
-                string V = webClient.DownloadString("https://pastebin.com/raw/Ky3810DF");
-                if (V != "1.1")
+                webClient.Headers.Add("user-agent", "Text-Parser");
+                string V = Regex.Match(webClient.DownloadString("https://api.github.com/repos/kiwilemons/text-parser/releases/latest"), "\"tag_name\":\"([0-9.]+)\"").Groups[1].Value;
+                webClient.Headers.Clear();
+                //Possibly compare the numbers to save time travelers from unneeded from downgrading
+                if (V != ProductVersion)
                 {
-                    if (MessageBox.Show(String.Format("A new version is available!\nCurrent Version: 1.1\nNew Version: {0}\nWould you like to go to the download page?", V), "Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MessageBox.Show($"A new version is available!\nCurrent Version: {ProductVersion}\nNew Version: {V}\nWould you like to go to the download page?", "Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         Process.Start("https://github.com/KiwiLemons/Text-Parser/releases");
                     }
@@ -34,7 +37,11 @@ namespace TextParser
             {
                 if (ex.Message.Contains("The remote name could not be resolved"))
                 {
-                    MessageBox.Show("Version check has failed!\nEither your internet is disconnected or servers are down, which is unlikely.", "An error has occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Version check has failed!\nEither your internet is disconnected or servers Github's servers are down, which is extremely unlikely.", "No Connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show($"An Unknown web exception occurred :( \n\n{ex.Message}");
                 }
             }
         }
@@ -45,17 +52,10 @@ namespace TextParser
             if (textBox1.Text == "" || textBox3.Text == "" || textBox4.Text == "")
                 textBox5.Text = "Please do not leave the \"Left String\", \"Right String\", or the \"Input\" fields empty";
             else if (textBox1.Text == textBox3.Text)
-                textBox5.Text = "The left and right string cannot match";
+                textBox5.Text = "The left and right strings cannot match";
             else
             {
-                if (!checkBox1.Checked)
-                {
-                    textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked);
-                }
-                else
-                {
-                    textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked);
-                }
+                textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked);
             }
         }
         private string TextParser(string leftString, string rightString, string Input, string prefix, string suffix, bool recursive, bool numbers)
@@ -98,7 +98,7 @@ namespace TextParser
                     //OG method
                     //extracted = String.Format("{1}{0}{2}", Input.Substring(Input.IndexOf(leftString) + leftString.Length, Input.IndexOf(rightString) - Input.IndexOf(leftString) - leftString.Length), prefix, suffix);
                     //Maybe we could add an option to change the regex to it will match even when the group is empty with (.*)
-                    extracted = $"{prefix}{Regex.Match(Input,$"{Regex.Escape(leftString)}(.+?){Regex.Escape(rightString)}").Groups[1]}{suffix}";
+                    extracted = $"{prefix}{Regex.Match(Input, $"{Regex.Escape(leftString)}(.+?){Regex.Escape(rightString)}").Groups[1]}{suffix}";
                 }
                 catch (ArgumentOutOfRangeException ex)
                 {
@@ -109,7 +109,7 @@ namespace TextParser
             else if (recursive)
             {
                 extracted = "";
-                MatchCollection Matches = Regex.Matches(Input,$"{Regex.Escape(leftString)}(.+?){Regex.Escape(rightString)}");
+                MatchCollection Matches = Regex.Matches(Input, $"{Regex.Escape(leftString)}(.+?){Regex.Escape(rightString)}");
                 if (numbers)
                 {
                     for (int i = 0; i < Matches.Count; i++)
@@ -154,7 +154,7 @@ namespace TextParser
                 */
                 #endregion
                 //if extracted contains more than one \n
-                if (Regex.Matches(extracted,@"\n").Count > 1)
+                if (Regex.Matches(extracted, @"\n").Count > 1)
                 {
                     Clipboard.SetText(extracted);
                     extracted = "The text has been copied to your clipboard!";
