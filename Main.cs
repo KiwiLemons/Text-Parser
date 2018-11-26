@@ -115,14 +115,14 @@ namespace TextParser
                     for (int i = 0; i < Matches.Count; i++)
                     {
                         //would be cool to have a number format option (1. , #1 , and others if i can think of any) Make a method that returns a string
-                        extracted += $"#{i + 1} {prefix}{Matches[i].Groups[1]}{suffix}\n";
+                        extracted += i != Matches.Count - 1 ? $"#{i + 1} {prefix}{Matches[i].Groups[1]}{suffix}\n" : $"#{i + 1} {prefix}{Matches[i].Groups[1]}{suffix}";
                     }
                 }
                 else
                 {
                     for (int i = 0; i < Matches.Count; i++)
                     {
-                        extracted += $"{prefix}{Matches[i].Groups[1]}{suffix}\n";
+                        extracted += i != Matches.Count - 1 ? $"{prefix}{Matches[i].Groups[1]}{suffix}\n" : $"{prefix}{Matches[i].Groups[1]}{suffix}";
                     }
                 }
                 #region OG recursive method
