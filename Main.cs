@@ -188,23 +188,26 @@ namespace TextParser
         //input from URL button
         private void button4_Click(object sender, EventArgs e)
         {
-            string url = Interaction.InputBox("Enter the URL into the textbox", "URL Input", "");
+            string[] urls = Interaction.InputBox("Enter the URL into the textbox", "URL Input", "").Split(',');
             //Just put a valid fucking url so I don't have to check it
-            if (url != "")
+            if (urls.Length != 0)
             {
-                try
+                foreach (string url in urls)
                 {
-                    textBox4.Text = webClient.DownloadString(url);
-                }
-                catch (WebException ex)
-                {
-                    if (ex.Message.Contains("The remote name could not be resolved"))
+                    try
                     {
-                        MessageBox.Show("Either your internet connection is down or the web server is down", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        textBox4.Text += $"{webClient.DownloadString(url)}\n";
                     }
-                    else
+                    catch (WebException ex)
                     {
-                        MessageBox.Show(String.Format("An unexpected error has occured!\n{0}", ex.Message), "Error");
+                        if (ex.Message.Contains("The remote name could not be resolved"))
+                        {
+                            MessageBox.Show("Either your internet connection is down or the web server is down", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            MessageBox.Show(String.Format("An unexpected error has occured!\n{0}", ex.Message), "Error");
+                        }
                     }
                 }
             }
