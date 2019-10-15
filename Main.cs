@@ -19,31 +19,6 @@ namespace TextParser
         private void Form1_Load(object sender, EventArgs e)
         {
             textBox4.MaxLength = int.MaxValue;
-            try
-            {
-                webClient.Headers.Add("user-agent", "Text-Parser");
-                string V = Regex.Match(webClient.DownloadString("https://api.github.com/repos/kiwilemons/text-parser/releases/latest"), "\"tag_name\":\"([0-9.]+)\"").Groups[1].Value;
-                webClient.Headers.Clear();
-                //Possibly compare the numbers to save time travelers from unneeded from downgrading
-                if (V != ProductVersion)
-                {
-                    if (MessageBox.Show($"A new version is available!\nCurrent Version: {ProductVersion}\nNew Version: {V}\nWould you like to go to the download page?", "Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        Process.Start("https://github.com/KiwiLemons/Text-Parser/releases");
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
-                if (ex.Message.Contains("The remote name could not be resolved"))
-                {
-                    MessageBox.Show("Version check has failed!\nEither your internet is disconnected or servers Github's servers are down, which is extremely unlikely.", "No Connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    MessageBox.Show($"An Unknown web exception occurred :( \n\n{ex.Message}");
-                }
-            }
         }
         //Parse Button
         private void button1_Click(object sender, EventArgs e)
@@ -110,23 +85,13 @@ namespace TextParser
             {
                 extracted = "";
                 MatchCollection Matches = Regex.Matches(Input, $"{Regex.Escape(leftString)}(.+?){Regex.Escape(rightString)}");
-                if (numbers)
+                for (int i = 0; i < Matches.Count; i++)
                 {
-                    for (int i = 0; i < Matches.Count; i++)
-                    {
-                        //would be cool to have a number format option (1. , #1 , and others if i can think of any) Make a method that returns a string
-                        extracted += i != Matches.Count - 1 ? $"#{i + 1} {prefix}{Matches[i].Groups[1]}{suffix}\n" : $"#{i + 1} {prefix}{Matches[i].Groups[1]}{suffix}";
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < Matches.Count; i++)
-                    {
-                        extracted += i != Matches.Count - 1 ? $"{prefix}{Matches[i].Groups[1]}{suffix}\n" : $"{prefix}{Matches[i].Groups[1]}{suffix}";
-                    }
+                    //would be cool to have a number format option (1. , #1 , and others if i can think of any) Make a method that returns a string
+                    extracted += $"{(numbers ? $"#{i + 1}" : "")} {prefix}{Matches[i].Groups[1]}{suffix}{(i == Matches.Count - 1 ? "" : "\n")}";
                 }
                 #region OG recursive method
-                /* 
+                /* This method isnt used anymore but i just like to keep it
                 Regex counter = new Regex(String.Format("{0}.*{1}", Regex.Escape(leftString), Regex.Escape(rightString)));
                 int amount = counter.Matches(Input).Count;
                 int i = 1, errors = 0;
@@ -178,13 +143,27 @@ namespace TextParser
         //Example button
         private void button3_Click(object sender, EventArgs e)
         {
-            textBox1.Text = "///";
-            textBox3.Text = @"\\\";
-            textBox4.Text = @"///find me\\\";
-            Prefix.Text = "You can ";
-            Suffix.Text = "!";
-            textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked);
+            //Check is input boxes are emmpty
+            if (textBox1.Text == "" && textBox3.Text == "" && textBox4.Text == "" && Prefix.Text == "" && Suffix.Text == "")
+            {
+                textBox1.Text = "///";
+                textBox3.Text = @"\\\";
+                textBox4.Text = @"///find me\\\";
+                Prefix.Text = "You can ";
+                Suffix.Text = "!";
+                textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked);
+            }
+            else if (MessageBox.Show("The input text boxes are not empty and will be replaced if you want to see the example.\nDo you wish to proceed?", "Inputs not empty", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                textBox1.Text = "///";
+                textBox3.Text = @"\\\";
+                textBox4.Text = @"///find me\\\";
+                Prefix.Text = "You can ";
+                Suffix.Text = "!";
+                textBox2.Text = TextParser(textBox1.Text, textBox3.Text, textBox4.Text, Prefix.Text, Suffix.Text, checkBox1.Checked, checkBox2.Checked);
+            }
         }
+
         //input from URL button
         private void button4_Click(object sender, EventArgs e)
         {
@@ -216,24 +195,6 @@ namespace TextParser
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             checkBox2.Enabled = checkBox1.Checked;
-        }
-
-        private void textBox5_TextChanged(object sender, EventArgs e)
-        {
-            //Need to fix overlapping timers
-            if (textBox5.Text != "")
-            {
-                TextTimer.Stop();
-                TextTimer.Start();
-                Console.WriteLine("Text Timer started");
-            }
-        }
-
-        private void TextTimer_Tick(object sender, EventArgs e)
-        {
-            TextTimer.Stop();
-            textBox5.Clear();
-            Console.WriteLine("Textbox cleared");
         }
     }
 }
